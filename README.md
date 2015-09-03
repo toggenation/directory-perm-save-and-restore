@@ -6,6 +6,8 @@ You then can change the permissions to what you need such as when updating modul
 
 When you are finished you can restore the directory perms from the file
 
+Do it as follows:
+
 ```
 ./perm_saver.pl store
 ./perm_saver.pl restore
