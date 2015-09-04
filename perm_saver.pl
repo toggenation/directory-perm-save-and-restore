@@ -31,11 +31,12 @@ sub restore($store_file){
 
 	while(<FH>){
 		chomp;
-		( $dirname, $perms) = split(/:/);
+		( $dirname, $perms, $uid, $gid) = split(/:/);
 
 		print "Directory $dirname perms $perms\n";
 
 		chmod oct($perms), $dirname;
+		chown $uid, $gid, $dirname;
 
 	}
 
@@ -48,7 +49,7 @@ sub store(){
 	my $store_file = shift;
 
 	print "Running STORE to $store_file\n";
-	my @dirs = `find . -type d`;
+	my @dirs = `find .`;
 
 	open(FH, '>', $store_file) or die $!;
 
@@ -56,8 +57,11 @@ sub store(){
 	foreach(@dirs){
 		chomp;
 	#	print "$_" . "\n";
-		my $filemode = (stat($_))[2];
-		printf FH "$_:%04o\n",  $filemode & 07777;
+		my @stats = stat($_); 
+		my $filemode = $stats[2];
+		my $uid = $stats[4];
+		my $gid = $stats[5];
+		printf FH "$_:%04o:$uid:$gid\n",  $filemode & 07777;
 
 	}
 
