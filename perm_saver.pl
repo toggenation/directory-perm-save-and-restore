@@ -1,55 +1,26 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use strict;
 
+
 # default
-my $store_file = 'stored_perms.txt';
-
-$store_file = $ARGV[1] if ( defined $ARGV[1] );
-
-if ( !defined $ARGV[0] ) { usage() }
-
-store($store_file) if ( $ARGV[0] eq 'store' );
-
-restore($store_file) if ( $ARGV[0] eq 'restore' );
+my $storeFile = 'stored_perms.txt';
 
 sub usage {
-    print "Saves directory names and permissions to '$store_file'\n";
-    print "Restores permissions from '$store_file'\n";
-    print $0 . ' [store|restore] <store_file>' . "\n";
+    my $fileName = shift;
+    print "Saves directory names and permissions to '$fileName'\n";
+    print "Restores permissions from '$fileName'\n";
+    print $0 . ' [store|restore] <storeFile>' . "\n";
     exit;
 }
 
-sub restore($store_file) {
-	print "Running RESTORE\n";
-
-    my $store_file = shift;
-
-    -f $store_file or die("$store_file does not exist!");
-
-    open( FH, "<", $store_file ) or die $!;
-
-    while (<FH>) {
-        chomp;
-        my ( $dirname, $perms, $uid, $gid ) = split(/:/);
-
-        print "Directory $dirname perms $perms\n";
-
-        chmod oct($perms), $dirname;
-        chown $uid, $gid, $dirname;
-
-    }
-
-    close(FH);
-}
-
 sub store {
-    my $store_file = shift;
+    my $storeFile = shift;
 
-    print "Running STORE to $store_file\n";
+    print "Running STORE to $storeFile\n";
     my @dirs = `find .`;
 
-    open( FH, '>', $store_file ) or die $!;
+    open( FH, '>', $storeFile ) or die $!;
 
     foreach (@dirs) {
         chomp;
@@ -61,8 +32,42 @@ sub store {
         my $gid      = $stats[5];
         printf FH "$_:%04o:$uid:$gid\n", $filemode & 07777;
     }
-    
-	close(FH);
-    
-	print "Stored to $store_file\n";
+
+    close(FH);
+
+    print "Stored to $storeFile\n";
 }
+
+sub restore {
+    print "Running RESTORE\n";
+
+    my $storeFile = shift;
+
+    -f $storeFile or die("$storeFile does not exist!");
+
+    open( FH, "<", $storeFile ) or die $!;
+
+    while (<FH>) {
+        chomp;
+        my ( $fileOrDirectory, $perms, $uid, $gid ) = split(/:/);
+
+        print
+            "Setting $fileOrDirectory perms to $perms UID,GID to $uid:$gid\n";
+
+        chmod oct($perms), $fileOrDirectory;
+        chown $uid, $gid, $fileOrDirectory;
+
+    }
+
+    close(FH);
+}
+
+$storeFile = $ARGV[1] if ( defined $ARGV[1] );
+
+if ( !defined $ARGV[0] ) { usage($storeFile) }
+
+my $command = $ARGV[0];
+if    ( $command eq 'store' )   { store($storeFile) }
+elsif ( $command eq 'restore' ) { restore($storeFile) }
+else                              { usage($storeFile) }
+
