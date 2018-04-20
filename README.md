@@ -1,8 +1,8 @@
 # Perl File & Directory Permission Saver and Restorer #
 
-This script saves the current directory and child files & subdirecties permissions to a text file
+This script saves the current directory and child files & subdirecties ownership and permissions to a text file
 
-You then can change the permissions to what you need such as when updating modules on an install of Joomla or other CMS
+It is useful if you run Wordpress, Joomla, Drupal, CakePHP or other CMS with restricted permissions but then want to temporarily relax the permissions to allow writing to files and directories during upgrades.
 
 When you are finished you can restore the permissions from the file
 
@@ -21,3 +21,5 @@ or you can use a different filename to store the different versions of directory
 ```
 
 Works on mac and linux
+
+james@toggen.com.au
