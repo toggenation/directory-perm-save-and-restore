@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-#use strict;
+use strict;
 
 # default
 my $store_file = 'stored_perms.txt';
@@ -14,7 +14,8 @@ store($store_file) if ($ARGV[0] eq 'store');
 
 restore($store_file) if ($ARGV[0] eq 'restore');
 
-sub usage(){
+sub usage 
+{
 	print "Saves directory names and permissions to '$store_file'\n";
 	print "Restores permissions from '$store_file'\n";
 	print $0 . ' [store|restore] <store_file>' . "\n";
@@ -26,12 +27,14 @@ sub restore($store_file){
 	print "Running RESTORE\n";
 
 	my $store_file = shift;
+	
+	 -f $store_file or die ( "$store_file does not exist!" );
 
 	open(FH, "<", $store_file) or die $!;
 
 	while(<FH>){
 		chomp;
-		( $dirname, $perms, $uid, $gid) = split(/:/);
+		my ( $dirname, $perms, $uid, $gid) = split(/:/);
 
 		print "Directory $dirname perms $perms\n";
 
@@ -44,7 +47,8 @@ sub restore($store_file){
 
 }
 
-sub store(){
+sub store
+{
 
 	my $store_file = shift;
 
