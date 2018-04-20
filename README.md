@@ -1,4 +1,4 @@
-# Perl File & Directory Permission Saver and Restorer #
+# File & Directory Permission Saver and Restorer #
 
 This script saves the current directory and child files & subdirecties ownership and permissions to a text file
 
